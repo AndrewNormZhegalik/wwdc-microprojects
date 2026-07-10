@@ -6,9 +6,9 @@ import Foundation
 @main
 struct checked_continuation {
     static func main() async throws {
-        let number = try await withUnsafeThrowingContinuation { (continuation: UnsafeContinuation<Int, Error>) in
-            fetchNumber { completion in
-                switch completion {
+        let number = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Int, Error>) in
+            fetchNumber { result in
+                switch result {
                 case let .success(number):
                     continuation.resume(returning: number)
                     
@@ -17,7 +17,7 @@ struct checked_continuation {
                 }
             }
         }
-        print("Got: ", number)
+        print(number)
     }
     
     static func fetchNumber(completion: @escaping (Result<Int, Error>) -> Void) {
@@ -25,8 +25,4 @@ struct checked_continuation {
             completion(.success(42))
         }
     }
-}
-
-enum FailedError: Error {
-    case failed
 }
