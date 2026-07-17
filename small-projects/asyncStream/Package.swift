@@ -4,23 +4,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "asyncStream",
+    name: "AsyncStream",
+    platforms: [macOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "asyncStream",
-            targets: ["asyncStream"]
+            name: "AsyncStream",
+            targets: ["AsyncStream"]
         ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "asyncStream"
+            name: "AsyncStream"
         ),
         .testTarget(
-            name: "asyncStreamTests",
-            dependencies: ["asyncStream"]
+            name: "AsyncStreamTests",
+            dependencies: ["AsyncStream"]
         ),
     ],
     swiftLanguageModes: [.v6]

@@ -23,6 +23,5 @@ let package = Package(
             name: "rate-limiterTests",
             dependencies: ["rate-limiter"]
         ),
-    ],
-    swiftLanguageModes: [.v6]
+    ]
 )

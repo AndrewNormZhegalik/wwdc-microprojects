@@ -5,24 +5,25 @@ import Foundation
 
 @main
 struct checked_continuation {
+    let urlSession = URLSession(configuration: .default, delegate: self, delegatteQueue: concurrentQueue)
     static func main() async throws {
-        let number = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Int, Error>) in
-            fetchNumber { result in
+        let data = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in
+            fetchData { result in
                 switch result {
-                case let .success(number):
-                    continuation.resume(returning: number)
+                case let .success(data):
+                    continuation.resume(returning: data)
                     
-                case let .failure(error):
-                    continuation.resume(throwing: error)
+                case let .failure(_):
+                    return
                 }
             }
         }
-        print(number)
+        print(data)
     }
     
-    static func fetchNumber(completion: @escaping (Result<Int, Error>) -> Void) {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            completion(.success(42))
+    static func fetchData(completion: @escaping (Result<String, Error>) -> Void) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+            completion(.success("Hello"))
         }
     }
 }

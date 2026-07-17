@@ -1,60 +1,36 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 import Foundation
+import UIKit
 
-final class ImageBatchLoader: Sendable {
-    private let fetch: @Sendable (URL) async throws -> Data
+actor ImageCache {
+    private var tasks: [URL: Task<UIImage, Error>] = [:]
     
-    init(fetch: @escaping @Sendable (URL) async throws -> Data = { url in
-        try await URLSession.shared.data(from: url).0
-    }) {
-        self.fetch = fetch
-    }
-    
-    func loadImages(with urls: [URL], maxConcurrent: Int) async throws -> [(url: URL, data: Data)] {
-        return try await withThrowingTaskGroup(of: (URL, Data).self) { group in
-            var currentIndex: Int = 0
-            let total = urls.count
-            var result: [(url: URL, data: Data)] = []
-            
-            while currentIndex < min(maxConcurrent, total) {
-                let url = urls[currentIndex]
-                group.addTask {
-                    let data = try await self.fetch(url)
-                    return (url, data)
-                }
-                
-                currentIndex += 1
+    func image(for url: URL) async throws -> UIImage {
+        if let task = cache[url] {
+            return try await task.value
+        }
+        
+        let newTask = Task {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let image = UIImage(data: data) else {
+                throw ImageDownloadError.cannotDecodeImage
             }
-            
-            for try await (url, data) in group {
-                result.append((url, data))
-                
-                if currentIndex < total {
-                    let url = urls[currentIndex]
-                    group.addTask {
-                        let data = try await self.fetch(url)
-                        return (url, data)
-                    }
-                    
-                    currentIndex += 1
-                }
-            }
-            
-            return result
+            return image
+        }
+        
+        tasks[url] = newTask
+        
+        do {
+            return try await newTask.value
+        } catch {
+            tasks[url] = nil
+            throw
         }
     }
+    Thread.current
 }
 
-actor ConcurrencyMeter {
-    private var current = 0
-    private(set) var peak = 0
-    func enter() {
-        current += 1
-        peak = max(peak, current)
-    }
-    
-    func exit() {
-        current -= 1
-    }
+enum ImageDownloadError: Error {
+    case cannotDecodeImage
 }

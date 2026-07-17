@@ -7,6 +7,7 @@ import Foundation
 struct ThreadExplosion {
     static func main() async throws {
         let start = Date()
+        
         try await withThrowingTaskGroup(of: Void.self) { group in
             for _ in 1...200 {
                 group.addTask {
@@ -17,6 +18,6 @@ struct ThreadExplosion {
             try await group.waitForAll()
         }
         
-        print("Elapsed:", Date().timeIntervalSince(start))
+        print("Elapsed: ", Date().timeIntervalSince(start))
     }
 }

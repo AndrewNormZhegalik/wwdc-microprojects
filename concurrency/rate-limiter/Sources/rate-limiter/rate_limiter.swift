@@ -4,10 +4,10 @@
 import Foundation
 
 actor RateLimiter {
-    let maxRequests: Int
-    let window: TimeInterval
-    let now: () -> Date
-    var timeStamps: [Date] = []
+    private let maxRequests: Int
+    private let window: TimeInterval
+    private let now: () -> Date
+    private var timeStamps: [Date] = []
     
     init(
         maxRequests: Int,
@@ -20,8 +20,9 @@ actor RateLimiter {
     }
     
     func allowRequest() -> Bool {
-        let timeRange = now().addingTimeInterval(-window)
-        timeStamps.removeAll(where: { $0 < timeRange })
+        let cutoff = now().addingTimeInterval(-window)
+        timeStamps.removeAll(where: { $0 < cutoff })
+        
         guard timeStamps.count < maxRequests else { return false }
         timeStamps.append(now())
         return true
