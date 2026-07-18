@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State var image: UIImage?
+    @State var showLeaky: Bool = false
+    
     var body: some View {
         VStack {
             if let image {
@@ -34,6 +36,14 @@ struct ContentView: View {
                         .padding(10)
                 }
                 .contentShape(Rectangle())
+                
+                Button {
+                    showLeaky = true
+                } label : {
+                    Text("showLeaky screen")
+                        .padding(10)
+                }
+                .contentShape(Rectangle())
             }
             .padding(20)
             
@@ -47,6 +57,9 @@ struct ContentView: View {
             
         }
         .padding()
+        .sheet(isPresented: $showLeaky) {
+            LeakyScreen()
+        }
     }
     
     func downsample(name: String, to maxPixels: CGFloat) -> UIImage? {
