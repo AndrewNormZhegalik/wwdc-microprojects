@@ -29,7 +29,7 @@ class Solution {
         return true
     }
     
-    func productExceptSelf(_ nums: [Int]) -> [Int] {
+    func productExceptSelf(_ nums: [Int]) -> [Int] { // Medium
         var result: [Int] = []
         
         var l = 0
@@ -51,5 +51,24 @@ class Solution {
         }
         
         return result
+    }
+    
+    func twoSum(_ numbers: [Int], _ target: Int) -> [Int] { // Medium Two Sum 2
+        var l = 0
+        var r = numbers.count - 1
+        
+        while l < r {
+            let sum = numbers[l] + numbers[r]
+            
+            if sum == target {
+                return [l + 1, r + 1]
+            } else if sum < target {
+                l += 1
+            } else {
+                r += 1
+            }
+        }
+        
+        return []
     }
 }
