@@ -71,4 +71,43 @@ class Solution {
         
         return []
     }
+    
+    func threeSum(_ nums: [Int]) -> [[Int]] { // Medium Three sum
+        var result: [[Int]] = []
+        let sortedArray = nums.sorted()
+        
+        for (index, num) in sortedArray.enumerated() {
+            var l = index + 1
+            var r = sortedArray.count - 1
+            
+            if index > 0 && num == sortedArray[index - 1] {
+                continue
+            }
+            
+            while l < r {
+                let sum = num + sortedArray[l] + sortedArray[r]
+                
+                if sum == 0 {
+                    result.append([num, sortedArray[l], sortedArray[r]])
+                    
+                    while l < r && sortedArray[l] == sortedArray[l + 1] {
+                        l += 1
+                    }
+                    
+                    while l < r && sortedArray[r] == sortedArray[r - 1] {
+                        r -= 1
+                    }
+                    
+                    l += 1
+                    r -= 1
+                } else if sum < 0 {
+                    l += 1
+                } else {
+                    r -= 1
+                }
+            }
+        }
+        
+        return result
+    }
 }
