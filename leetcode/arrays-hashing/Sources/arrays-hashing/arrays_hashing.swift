@@ -3,7 +3,7 @@
 
 class Solution {
     func topKFrequent(_ nums: [Int], _ k: Int) -> [Int] { // Medium
-        let frequencies: [Int: Int] = [:]
+        var frequencies: [Int: Int] = [:]
         
         for num in nums {
             frequencies[num, default: 0] += 1
@@ -13,7 +13,7 @@ class Solution {
     }
     
     func groupAnagrams(_ strs: [String]) -> [[String]] { // Medium
-        let frequencies: [String: [String]] = [:]
+        var frequencies: [String: [String]] = [:]
         
         for str in strs {
             let newStr = String(str.sorted())
@@ -54,7 +54,7 @@ class Solution {
         
         for value in viewed.values {
             if value != 0 {
-                return 0
+                return false
             }
         }
         
@@ -73,5 +73,41 @@ class Solution {
         }
         
         return false
+    }
+    
+    func isValidSudoku(_ board: [[Character]]) -> Bool { // Bool 
+        for i in 0..<9 {
+            var viewed = Set<Character>()
+            for j in 0..<9 {
+                if board[i][j] != ".", viewed.contains(board[i][j]) {
+                    return false
+                }
+                viewed.insert(board[i][j])
+            }
+        }
+        
+        for j in 0..<9 {
+            var viewed = Set<Character>()
+            for i in 0..<9 {
+                if board[i][j] != ".", viewed.contains(board[i][j]) {
+                    return false
+                }
+                viewed.insert(board[i][j])
+            }
+        }
+        
+        for k in 0..<9 {
+            var viewed = Set<Character>()
+            for i in k / 3 * 3 ..< k / 3 * 3 + 3 {
+                for j in k % 3 * 3 ..< k % 3 * 3 + 3 {
+                    if board[i][j] != ".", viewed.contains(board[i][j]) {
+                        return false
+                    }
+                    viewed.insert(board[i][j])
+                }
+            }
+        }
+        
+        return true
     }
 }
