@@ -38,6 +38,21 @@ struct ContentView: View {
 
             print(sum)
         }
+        checkCow()
+    }
+    
+    func checkCoW() {
+        var original = Array(0..<1_000_000)
+        var copy = original // O(1) instead of O(n)
+        
+        original.withUnsafeBufferPointer { print("original: ", $0.baseAddress!) }
+        copy.withUnsafeBufferPointer { print("copy: ", $0.baseAddress!) }
+        
+        copy.append(1) // O(n) because we allocate new buffer when mutating
+        
+        print("After change")
+        original.withUnsafeBufferPointer { print("original: ", $0.baseAddress!) }
+        copy.withUnsafeBufferPointer { print("copy: ", $0.baseAddress!) }
     }
 }
 

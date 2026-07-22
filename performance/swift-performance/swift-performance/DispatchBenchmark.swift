@@ -48,3 +48,57 @@ class Tiger: Lion {
     }
 
 }
+
+//class Ref<T> {
+//    var value: T
+//    init(value: T) {
+//        self.value = value
+//    }
+//}
+//
+//struct Box<T> {
+//    var ref: Ref<T>
+//    init(value: T) {
+//        self.value = Ref(value)
+//    }
+//    
+//    var value {
+//        get {
+//            return ref.value
+//        }
+//        set {
+//            if !isKnownUniquelyReferenced(&ref) {
+//                ref = Ref(newValue)
+//                return
+//            }
+//            
+//            ref.value = value
+//        }
+//    }
+//}
+
+
+
+class Reference<T> {
+    var value: T
+    
+    init(_ value: T) {
+        self.value = value
+    }
+}
+
+struct Box<T> {
+    var reference: Reference<T>
+    
+    var value: T {
+        get {
+            reference.value
+        } set {
+            if isKnownUniquelyReferenced(&reference) {
+                reference.value = newValue
+            } else {
+                reference = Reference(newValue)
+            }
+        }
+    }
+}
