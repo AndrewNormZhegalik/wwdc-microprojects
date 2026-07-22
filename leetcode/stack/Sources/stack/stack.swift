@@ -7,7 +7,7 @@ final class Solution {
     func isValid(_ s: String) -> Bool { // Valid paranthesis (Easy)
         guard s.count % 2 == 0 else { return false }
         
-        var stack = [Character]()
+        var stack: [Character] = []
         
         for char in s {
             switch char {
@@ -21,6 +21,6 @@ final class Solution {
             }
         }
         
-        return stack.isEmpty
+        return true
     }
 }
