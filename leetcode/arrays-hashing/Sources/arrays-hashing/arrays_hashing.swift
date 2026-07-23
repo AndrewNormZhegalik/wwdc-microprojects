@@ -75,7 +75,7 @@ class Solution {
         return false
     }
     
-    func isValidSudoku(_ board: [[Character]]) -> Bool { // Bool 
+    func isValidSudoku(_ board: [[Character]]) -> Bool { // Bool
         for i in 0..<9 {
             var viewed = Set<Character>()
             for j in 0..<9 {
@@ -95,7 +95,7 @@ class Solution {
                 viewed.insert(board[i][j])
             }
         }
-        
+        var array: Array<Int> = [1, 2, 3, 4]
         for k in 0..<9 {
             var viewed = Set<Character>()
             for i in k / 3 * 3 ..< k / 3 * 3 + 3 {
@@ -109,5 +109,27 @@ class Solution {
         }
         
         return true
+    }
+    
+    // Longest Consecutive sequence
+    func longestConsecutive(_ nums: [Int]) -> Int { // Medium if !numbers.contains(num - 1) ruleeeee!!!!
+        var numbers: Set<Int> = Set(nums)
+        var maxResult: Int = 0
+        
+        for num in numbers {
+            if !numbers.contains(num - 1) {
+                var currentNum = num
+                var currentResult = 1
+                
+                while numbers.contains(num + 1) {
+                    currentNum += 1
+                    currentResult += 1
+                }
+                
+                maxResult = max(currentResult, maxResult)
+            }
+        }
+        
+        return maxResult
     }
 }
