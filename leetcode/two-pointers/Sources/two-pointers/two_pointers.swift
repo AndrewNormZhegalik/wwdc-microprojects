@@ -110,4 +110,28 @@ class Solution {
         
         return result
     }
+    
+    // Container With Most Water
+    // Moving the taller pointer can never improve the area because the height is capped by the shorter line, while the width only shrinks
+    func maxArea(_ height: [Int]) -> Int { // Medium
+        var maxAmount: Int = 0
+        
+        var l = 0
+        var r = height.count - 1
+        
+        while l < r {
+            let currentHeight = min(height[l], height[r])
+            let currentWidth = r - l
+            let currentAmount = currentHeight * currentWidth
+            maxAmount = max(currentAmount, maxAmount)
+            
+            if height[l] <= height[r] {
+                l += 1
+            } else {
+                r -= 1
+            }
+        }
+        
+        return maxAmount
+    }
 }
