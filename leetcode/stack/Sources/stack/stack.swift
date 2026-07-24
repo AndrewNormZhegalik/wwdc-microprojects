@@ -23,4 +23,19 @@ final class Solution {
         
         return true
     }
+    
+    func dailyTemperatures(_ temperatures: [Int]) -> [Int] { // Medium
+        var stack: [Int] = []
+        var result = Array(repeating: 0, count: temperatures.count)
+        
+        for i in 0..<temperatures.count {
+            while !stack.isEmpty && temperatures[i] < temperatures[stack.last!] {
+                let waiting = stack.removeLast()
+                result[waiting] = i - waiting
+            }
+            stack.append(i)
+        }
+        
+        return result
+    }
 }
