@@ -17,4 +17,23 @@ class Solution {
         
         return maxProfit
     }
+    
+    func lengthOfLongestSubstring(_ s: String) -> Int {
+        guard !s.isEmpty else { return 0 }
+        var chars = Array(s)
+        var l = 0
+        var viewed: Set<Character> = []
+        var longest: Int = 1
+        
+        for r in 0..<chars.count {
+            while viewed.contains(chars[r]) {
+                viewed.remove(chars[l])
+                l += 1
+            }
+            viewed.insert(chars[r])
+            longest = max(longest, r - l + 1)
+        }
+        
+        return longest
+    }
 }
