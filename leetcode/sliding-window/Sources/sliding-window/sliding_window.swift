@@ -18,22 +18,42 @@ class Solution {
         return maxProfit
     }
     
-    func lengthOfLongestSubstring(_ s: String) -> Int {
+    func lengthOfLongestSub(_ s: String) -> Int { // Medium
         guard !s.isEmpty else { return 0 }
-        var chars = Array(s)
-        var l = 0
-        var viewed: Set<Character> = []
-        var longest: Int = 1
         
-        for r in 0..<chars.count {
-            while viewed.contains(chars[r]) {
-                viewed.remove(chars[l])
+        var longest = 1
+        var l = 0
+        var array = Array(s)
+        var viewed: Set<Character> = []
+        
+        for r in 0..<array.count {
+            while viewed.contains(array[r]) {
+                viewed.remove(array[l])
                 l += 1
             }
-            viewed.insert(chars[r])
+            viewed.insert(array[r])
             longest = max(longest, r - l + 1)
         }
         
         return longest
+    }
+    
+    // Minimum Size Subarray Sum
+    func minSubArrayLen(_ target: Int, _ nums: [Int]) -> Int {
+        var sum = 0
+        var l = 0
+        var minimal = Int.max
+        
+        for r in 0..<nums.count {
+            sum += nums[r]
+            
+            while sum >= target {
+                minimal = min(minimal, r - l + 1)
+                sum -= nums[l]
+                l += 1
+            }
+        }
+        
+        return minimal == Int.max ? 0 : minimal
     }
 }
