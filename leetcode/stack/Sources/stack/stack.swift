@@ -38,4 +38,19 @@ final class Solution {
         
         return result
     }
+    
+    func nextGreaterElement(_ nums1: [Int], _ nums2: [Int]) -> [Int] { // Easy
+        var stack: [Int] = []
+        var dict: [Int: Int] = [:]
+        
+        for num in nums2 {
+            while !stack.isEmpty && num > stack.last! {
+                let waiting = stack.removeLast()
+                dict[waiting] = num
+            }
+            stack.append(num)
+        }
+        
+        return nums1.map { dict[$0] ?? -1 }
+    }
 }
