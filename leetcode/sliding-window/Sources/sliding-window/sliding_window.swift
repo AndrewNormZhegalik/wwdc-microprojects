@@ -57,7 +57,7 @@ class Solution {
         return minimal == Int.max ? 0 : minimal
     }
     
-    func characterReplacement(_ s: String, _ k: Int) -> Int {
+    func characterReplacement(_ s: String, _ k: Int) -> Int { // Medium
         var l = 0
         var longest = 0
         var frequency: [Character: Int] = [:]
@@ -77,5 +77,56 @@ class Solution {
         }
         
         return longest
+    }
+    
+    func minWindow(_ s: String, _ t: String) -> String { // HARD
+        var requiredChars: [Character: Int] = [:]
+        var windowCount: [Character: Int] = [:]
+        var l = 0
+        var answer = (length: Int.max, start: 0, end: 0)
+        var formed = 0
+        
+        let sChars = Array(s)
+        let tChars = Array(t)
+        
+        for char in tChars {
+            requiredChars[char, default: 0] += 1
+        }
+        
+        let matches = requiredChars.count
+        
+        for r in 0..<sChars.count {
+            let char = sChars[r]
+            windowCount[char, default: 0] += 1
+            
+            if let req = requiredChars[char], windowCount[char]! == req {
+                formed += 1
+            }
+            
+            while l <= r, formed == matches {
+                let currentLength = r - l + 1
+                
+                if currentLength < answer.length {
+                    answer.length = currentLength
+                    answer.start = l
+                    answer.end = r
+                }
+                
+                let leftChar = sChars[l]
+                windowCount[leftChar]! -= 1
+                
+                if let req = requiredChars[char], windowCount[leftChar]! < req {
+                    formed -= 1
+                }
+                
+                l += 1
+            }
+        }
+        
+        if answer.length == Int.max {
+            return ""
+        } else {
+            return String(sChars[answer.start...answer.end])
+        }
     }
 }
