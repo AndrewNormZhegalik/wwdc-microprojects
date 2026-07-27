@@ -129,4 +129,46 @@ class Solution {
             return String(sChars[answer.start...answer.end])
         }
     }
+    
+    func findAnagrams(_ s: String, _ p: String) -> [Int] {
+        var l = 0
+        var requiredCharacters: [Character: Int] = [:]
+        var windowCount: [Character: Int] = [:]
+        
+        var sChars = Array(s)
+        var pChars = Array(p)
+        
+        var answer: [Int] = []
+        var formed: Int = 0
+        
+        for char in pChars {
+            requiredCharacters[char, default: 0] += 1
+        }
+        
+        for r in 0..<sChars.count {
+            let char = sChars[r]
+            windowCount[char, default: 0] += 1
+            
+            if let req = requireCharacters[char], windowCount[char] == req {
+                formed += 1
+            }
+            
+            if (r - l + 1) == pChars.count {
+                if formed == requiredCharacters.count {
+                    answers.append(l)
+                }
+                
+                let char = sChars[l]
+                windowCount[char, default: 0] -= 1
+                
+                if let req = requiredCharacters[char], windowCount[char, default: 0] < req {
+                    formed -= 1
+                }
+                
+                l += 1
+            }
+        }
+        
+        return answers
+    }
 }
