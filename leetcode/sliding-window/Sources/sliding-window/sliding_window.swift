@@ -56,4 +56,26 @@ class Solution {
         
         return minimal == Int.max ? 0 : minimal
     }
+    
+    func characterReplacement(_ s: String, _ k: Int) -> Int {
+        var l = 0
+        var longest = 0
+        var frequency: [Character: Int] = [:]
+        let array = Array(s)
+        
+        for r in 0..<array.count {
+            frequency[array[r], default: 0] += 1
+            let windowSize = r - l + 1
+            let mostFrequent = frequency.values.max() ?? 0
+            
+            if windowSize - mostFrequent > k {
+                frequency[array[l]]? -= 1
+                l += 1
+            }
+            
+            longest = max(longest, r - l + 1)
+        }
+        
+        return longest
+    }
 }
