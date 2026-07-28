@@ -171,4 +171,37 @@ class Solution {
         
         return answers
     }
+    
+    //  Permutation in String
+    func checkInclusion(_ s1: String, _ s2: String) -> Bool { // Medium
+        var l = 0
+        let s1Chars = Array(s1)
+        let s2Chars = Array(s2)
+        
+        var requiredChars: [Character: Int] = [:]
+        var windowCount: [Character: Int] = [:]
+        
+        for char in s1Chars {
+            requiredChars[char, default: 0] += 1
+        }
+        
+        for r in 0..<s2Chars.count {
+            windowCount[s2Chars[r], default: 0] += 1
+            
+            if r - l + 1 == s1Chars.count {
+                if requiredChars == windowCount {
+                    return true
+                }
+                
+                let char = windowCount[s2Chars[l]]
+                windowCount[char, default: 0] -= 1
+                if windowCount[char] == 0 {
+                    windowCount.removeValue(forKey: char)
+                }
+                l += 1
+            }
+        }
+        
+        return false
+    }
 }
