@@ -20,4 +20,24 @@ class Solution {
         
         return -1
     }
+    
+    // Search Insert Position
+    func searchInsert(_ nums: [Int], _ target: Int) -> Int { // Easy
+        var l = 0
+        var r = nums.count - 1
+        
+        while l <= r {
+            let mid = l + (r - l) / 2
+            
+            if nums[mid] == target {
+                return mid
+            } else if nums[mid] > target {
+                r = mid - 1
+            } else {
+                l = mid + 1
+            }
+        }
+        
+        return l
+    }
 }
