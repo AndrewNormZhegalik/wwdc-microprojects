@@ -14,6 +14,14 @@ class Solution {
         
         return root
     }
+    
+    func maxDepth(_ root: TreeNode?) -> Int {
+        guard let root else { return 0 }
+        
+        let depth = 1 + max(maxDepth(root.left), maxDepth(root.right))
+        
+        return depth
+    }
 }
 
 class TreeNode {
