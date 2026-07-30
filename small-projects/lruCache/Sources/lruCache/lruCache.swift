@@ -6,28 +6,30 @@ class LRUCache {
     var capacity: Int
     var head: Node
     var tail: Node
-    
-    init(capacity: Int) {
+
+    init(_ capacity: Int) {
         storage = [:]
         self.capacity = capacity
         head = Node()
         tail = Node()
         head.next = tail
     }
+
     
-    func get(_ key: Int) -> Int? {
-        guard let node = storage[key] else { return nil }
+    func get(_ key: Int) -> Int {
+        guard let node = storage[key] else { return -1 }
         
         moveToHead(node)
         return node.value
     }
+
     
     func put(_ key: Int, _ value: Int) {
         if let node = storage[key] {
             node.value = value
             moveToHead(node)
         } else {
-            let node = Node(key: key, value: value, next: head.next)
+            let node = Node(key: key, value: value)
             moveToHead(node)
             storage[key] = node
             
@@ -36,9 +38,11 @@ class LRUCache {
             }
         }
     }
-    
+
     private func moveToHead(_ node: Node) {
-        guard node.previous != head else { return }
+        if node.previous === head {
+            return
+        }
         
         let currentNode = node
         let previous = node.previous
@@ -52,7 +56,7 @@ class LRUCache {
         headNext?.previous = currentNode
         head.next = currentNode
     }
-    
+
     private func removeFromTail() {
         guard let key = tail.previous?.key else { return }
         let previous = tail.previous
@@ -82,3 +86,45 @@ class Node {
         self.previous = previous
     }
 }
+
+class MinStack {
+    var head: Node!
+    
+    init() {
+        head = nil
+    }
+    
+    func push(_ value: Int) {
+        if head == nil {
+            head = Node(value: value, minValue: value, next: head)
+        } else {
+            head = Node(value: value, minValue: min(value, head.minValue), next: head)
+        }
+    }
+    
+    func pop() {
+        head = head.next
+    }
+    
+    func top() -> Int {
+        head.value
+    }
+    
+    func getMin() -> Int {
+        head.minValue
+    }
+}
+
+class Node {
+    var value: Int
+    var minValue: Int
+    var next: Node?
+    
+    init(value: Int, minValue: Int, next: Node? = nil) {
+        self.value = value
+        self.minValue = minValue
+        self.next = next
+    }
+}
+
+
