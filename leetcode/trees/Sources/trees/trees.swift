@@ -72,6 +72,20 @@ class Solution {
         
         return 1 + max(left, right)
     }
+    
+    func diameterOfBinaryTree(_ root: TreeNode?) -> Int {
+        var best = 0
+        _ = depth(root, &best)
+        return best
+    }
+    
+    private func depth(_ node: TreeNode?, _ best: inout Int) -> Int {
+        guard let node else { return }
+        let left = depth(node.left, &best)
+        let right = depth(node.right, &best)
+        best = max(best, left + right)
+        return 1 + max(left, right)
+    }
 }
 
 class TreeNode {
