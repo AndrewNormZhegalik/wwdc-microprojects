@@ -87,6 +87,7 @@ class Solution {
         return 1 + max(left, right)
     }
     
+    // Medium O(h) - for not balanced trees, O(logn) - for balanced trees (Binary Search Tree)
     func lowestCommonAncestor(_ root: TreeNode?, _ p: TreeNode?, _ q: TreeNode?) -> TreeNode? {
         guard let root, let pVal = p?.value, let qVal = q?.val else { return nil }
         
@@ -97,6 +98,24 @@ class Solution {
         }
         
         return root
+    }
+    
+    // Medium Binary Tree (not Binary Search Tree) O(n) because we go through tree leaves
+    func lowestCommonAncestor(_ root: TreeNode?, _ p: TreeNode?, _ q: TreeNode?) -> TreeNode? {
+        guard let root else { return nil }
+        
+        if root === p || root === q {
+            return root
+        }
+        
+        let left = lowestCommonAncestor(root.left, p, q)
+        let right = lowestCommonAncestor(root.right, p, q)
+        
+        if left != nil && right != nil {
+            return root
+        }
+        
+        return left ?? right
     }
 }
 
