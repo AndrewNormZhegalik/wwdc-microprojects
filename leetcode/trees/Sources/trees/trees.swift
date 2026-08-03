@@ -86,6 +86,18 @@ class Solution {
         best = max(best, left + right)
         return 1 + max(left, right)
     }
+    
+    func lowestCommonAncestor(_ root: TreeNode?, _ p: TreeNode?, _ q: TreeNode?) -> TreeNode? {
+        guard let root, let pVal = p?.value, let qVal = q?.val else { return nil }
+        
+        if pVal < root.val && qVal < root.val {
+            return lowestCommonAncestor(root.left, p, q)
+        } else if pVal > root.val && qVal > root.val {
+            return lowestCommonAncestor(root.right, p, q)
+        }
+        
+        return root
+    }
 }
 
 class TreeNode {
