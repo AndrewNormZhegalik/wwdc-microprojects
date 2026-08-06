@@ -31,7 +31,7 @@ class Solution {
         return isSameTree(p?.left, q?.left) && isSameTree(p?.right, q?.right)
     }
     
-    func mergeTrees(_ root1: TreeNode?, _ root2: TreeNode?) -> TreeNode? {
+    func mergeTrees(_ root1: TreeNode?, _ root2: TreeNode?) -> TreeNode? { // Easy
         if root1 == nil && root2 == nil {
             return nil
         }
@@ -73,7 +73,7 @@ class Solution {
         return 1 + max(left, right)
     }
     
-    func diameterOfBinaryTree(_ root: TreeNode?) -> Int {
+    func diameterOfBinaryTree(_ root: TreeNode?) -> Int { // Easy
         var best = 0
         _ = depth(root, &best)
         return best
@@ -116,6 +116,38 @@ class Solution {
         }
         
         return left ?? right
+    }
+    
+    func isSymmetric(_ root: TreeNode?) -> Bool { // Easy
+        return isMirror(root?.left, root?.right)
+    }
+    
+    func isMirror(_ a: TreeNode?, _ b: TreeNode?) -> Bool {
+        if a == nil && b == nil {
+            return true
+        }
+        
+        guard let a, let b, a.val == b.val else { return false }
+        
+        return isMirror(a.left, b.right) && isMirror(a.right, b.left)
+    }
+    
+    func isValidBST(_ root: TreeNode?) -> Bool {
+        return isValid(root, min: nil, max: nil)
+    }
+    
+    private func isValid(_ node: TreeNode?, min: Int?, max: Int?) -> Bool {
+        guard let node else { return true }
+        
+        if let min, node.val <= min {
+            return false
+        }
+        
+        if let max, node.val >= max {
+            return false
+        }
+        
+        return isValid(node.left, min: min, max: node.val) && isValid(node.right, min: node.val, max: max)
     }
 }
 
