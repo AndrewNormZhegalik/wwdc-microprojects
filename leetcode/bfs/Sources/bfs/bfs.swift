@@ -84,20 +84,6 @@ class Solution {
         
         return depth
     }
-    
-    func isSymmetric(_ root: TreeNode?) -> Bool {
-        return isMirror(root?.left, root?.right)
-    }
-    
-    func isMirror(_ a: TreeNode?, _ b: TreeNode?) -> Bool {
-        if a == nil && b == nil {
-            return true
-        }
-        
-        guard let a, let b, a.val == b.val else { return false }
-        
-        return isMirror(a.left, b.right) && isMirror(a.right, b.left)
-    }
 }
 
 public class TreeNode {
