@@ -84,6 +84,41 @@ class Solution {
         
         return depth
     }
+    
+    func zigzagLevelOrder(_ root: TreeNode?) -> [[Int]] {
+        guard let root else { return [] }
+        var queue = [root]
+        var result: [[Int]] = []
+        var depth = 0
+        
+        while !queue.isEmpty {
+            let size = queue.count
+            depth += 1
+            var level = [Int]()
+            
+            for _ in 0..<size {
+                let node = queue.removeFirst()
+                
+                level.append(node.val)
+                
+                if let left = node.left {
+                    queue.append(left)
+                }
+                
+                if let right = node.right {
+                    queue.append(right)
+                }
+            }
+            
+            if depth % 2 == 0 {
+                result.append(level.reversed())
+            } else {
+                result.append(level)
+            }
+        }
+        
+        return result
+    }
 }
 
 public class TreeNode {
