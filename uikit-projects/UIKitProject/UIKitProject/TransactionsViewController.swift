@@ -8,54 +8,96 @@
 import UIKit
 
 final class TransactionsViewController: UIViewController {
-    private let tableView = UITableView()
-    private var dataSource: UITableViewDiffableDataSource<Section, UUID>!
+    private var collectionView: UICollectionView!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, ListItem>!
     
     private var transactions: [Transaction] = [
-        Transaction(id: UUID(), title: "Coffee", amount: 12),
-        Transaction(id: UUID(), title: "Books",  amount: 80),
-        Transaction(id: UUID(), title: "Taxi",   amount: 35)
+        Transaction(id: UUID(), title: "Coffee", amount: 12, month: "December"),
+        Transaction(id: UUID(), title: "Books",  amount: 80, month: "December"),
+        Transaction(id: UUID(), title: "Taxi",   amount: 35, month: "December"),
+        
+        Transaction(id: UUID(), title: "Beer", amount: 12, month: "January"),
+        Transaction(id: UUID(), title: "Subway",  amount: 100, month: "January")
     ]
+    
+    private let monthRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, String> {
+        cell, indexPath, month in
+        var config = cell.defaultContentConfiguration()
+        config.text = month
+        cell.contentConfiguration = config
+        cell.accessories = [.outlineDisclosure()]
+    }
+    
+    private let transactionRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Transaction> {
+        cell, _, transaction in
+        var config = cell.defaultContentConfiguration()
+        config.text = transaction.title
+        config.secondaryText = "\(transaction.amount)"
+        cell.contentConfiguration = config
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Transactions"
         view.backgroundColor = .white
-        setupTableView()
+        setupCollectionView()
         makeDataSource()
         applySnapshot(animated: false)
         setupToolbar()
     }
     
-    private func setupTableView() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        view.addSubview(tableView)
+    private func setupCollectionView() {
+        var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+        config.headerMode = .none
+        let layout = UICollectionViewCompositionalLayout.list(using: config)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(collectionView)
+        
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
     private func makeDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, UUID>(tableView: tableView) { [weak self] tableView, indexPath, id in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-            guard let transaction = self?.transactions[indexPath.row] else { return UITableViewCell() }
-            var config = cell.defaultContentConfiguration()
-            config.text = transaction.title
-            config.secondaryText = "\(transaction.amount)"
-            cell.contentConfiguration = config
-            return cell
+        dataSource = UICollectionViewDiffableDataSource<Section, ListItem>(collectionView: collectionView) { [weak self] collectionView, indexPath, item in
+            guard let self else { return nil }
+            
+            switch item {
+            case let .month(name):
+                return collectionView.dequeueConfiguredReusableCell(using: self.monthRegistration, for: indexPath, item: name)
+                
+            case let .transaction(id):
+                guard let transaction = transactions.first(where: { $0.id == id }) else { return nil }
+                return collectionView.dequeueConfiguredReusableCell(using: self.transactionRegistration, for: indexPath, item: transaction)
+            }
         }
     }
     
+//    private func applySnapshot(animated: Bool = true) {
+//        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
+//        snapshot.appendSections([Section.main])
+//        snapshot.appendItems(transactions.map(\.id))
+//        dataSource.apply(snapshot, animatingDifferences: animated)
+//    }
+    
     private func applySnapshot(animated: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UUID>()
-        snapshot.appendSections([Section.main])
-        snapshot.appendItems(transactions.map(\.id))
-        dataSource.apply(snapshot, animatingDifferences: animated)
+        var snapshot = NSDiffableDataSourceSectionSnapshot<ListItem>()
+        
+        let grouped = Dictionary(grouping: transactions, by: \.month)
+        
+        for (month, items) in grouped.sorted(by: { $0.key < $1.key }) {
+            let header = ListItem.month(month)
+            
+            snapshot.append([header])
+            snapshot.append(items.map { ListItem.transaction($0.id) }, to: header)
+            snapshot.expand([header])
+        }
+        
+        dataSource.apply(snapshot, to: .main, animatingDifferences: animated)
     }
     
     private func setupToolbar() {
@@ -73,8 +115,23 @@ final class TransactionsViewController: UIViewController {
     
     @objc
     private func add() {
-        transactions.insert(Transaction(id: UUID(), title: "New", amount: Int.random(in: 1...99)), at: 0)
-        applySnapshot()
+        let newTransaction = Transaction(id: UUID(), title: "New", amount: Int.random(in: 1...99), month: "December")
+        var snapshot = dataSource.snapshot(for: .main)
+        let header = ListItem.month(newTransaction.month)
+        transactions.insert(newTransaction, at: 0)
+        if !snapshot.contains(header) {
+            snapshot.append([header])
+        }
+        
+        let children = snapshot.snapshot(of: header, includingParent: false).items
+        
+        if let first = children.first {
+            snapshot.insert([.transaction(newTransaction.id)], before: first)
+        } else {
+            snapshot.append([.transaction(newTransaction.id)], to: header)
+        }
+
+        dataSource.apply(snapshot, to: .main, animatingDifferences: true)
     }
     
     @objc
@@ -96,7 +153,7 @@ final class TransactionsViewController: UIViewController {
         guard !transactions.isEmpty else { return }
         transactions[0].amount += 10
         var snapshot = dataSource.snapshot()
-        snapshot.reconfigureItems([transactions[0].id])
+        snapshot.reconfigureItems([.transaction(transactions[0].id)])
         dataSource.apply(snapshot, animatingDifferences: false)
     }
     

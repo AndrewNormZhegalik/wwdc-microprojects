@@ -11,6 +11,7 @@ nonisolated struct Transaction: Hashable {
     let id: UUID
     var title: String
     var amount: Int
+    var month: String
 }
 
 nonisolated enum Section: Hashable {
