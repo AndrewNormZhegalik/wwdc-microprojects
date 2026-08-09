@@ -23,7 +23,7 @@ class Solution {
         
         var longest = 1
         var l = 0
-        var array = Array(s)
+        let array = Array(s)
         var viewed: Set<Character> = []
         
         for r in 0..<array.count {
@@ -196,12 +196,35 @@ class Solution {
                 let char = windowCount[s2Chars[l]]
                 windowCount[char, default: 0] -= 1
                 if windowCount[char] == 0 {
-                    windowCount.removeValue(forKey: char)
+                    windowCount[char] = nil
                 }
                 l += 1
             }
         }
         
         return false
+    }
+    
+    //904. Fruit Into Baskets
+    func totalFruit(_ fruits: [Int]) -> Int { // Medium
+        var maxAmount = 0
+        var fruitFrequency: [Int: Int] = [:]
+        var l = 0
+        
+        for r in 0..<fruits.count {
+            fruitFrequency[fruits[l], default: 0] += 1
+            
+            while fruitFrequency.count > 2 {
+                fruitFrequency[fruits[l], default: 0] -= 1
+                
+                if fruitFrequency[fruits[l], default: 0] == 0 {
+                    fruitFrequency[fruits[l]] = nil
+                }
+            }
+            
+            maxAmount = max(maxAmount, r - l + 1)
+        }
+        
+        return maxAmount
     }
 }
