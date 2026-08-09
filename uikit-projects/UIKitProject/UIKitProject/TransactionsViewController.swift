@@ -30,10 +30,16 @@ final class TransactionsViewController: UIViewController {
     
     private let transactionRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Transaction> {
         cell, _, transaction in
-        var config = cell.defaultContentConfiguration()
-        config.text = transaction.title
-        config.secondaryText = "\(transaction.amount)"
+        var config = TransactionContentConfiguration()
+        config.title = transaction.title
+        config.amount = transaction.amount
         cell.contentConfiguration = config
+        
+        cell.configurationUpdateHandler = { cell, state in
+            var background = UIBackgroundConfiguration.listCell()
+            background.backgroundColor = state.isSelected ? .red : .secondarySystemGroupedBackground
+            cell.backgroundConfiguration = background
+        }
     }
 
     override func viewDidLoad() {
