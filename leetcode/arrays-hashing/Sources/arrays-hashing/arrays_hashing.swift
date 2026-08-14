@@ -132,4 +132,19 @@ class Solution {
         
         return maxResult
     }
+    
+    //  Maximum Subarray
+    func maxSubArray(_ nums: [Int]) -> Int { // Medium
+        guard !nums.isEmpty else { return 0 }
+        
+        var globalMax = nums[0]
+        var currentMax = nums[0]
+        
+        for i in 1..<nums.count {
+            currentMax = max(nums[i], currentMax + nums[i])
+            globalMax = max(currentMax, globalMax)
+        }
+        
+        return globalMax
+    }
 }
