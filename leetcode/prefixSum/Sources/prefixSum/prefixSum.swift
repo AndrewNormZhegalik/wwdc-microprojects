@@ -72,4 +72,47 @@ class Solution {
         
         return -1
     }
+    
+    // Contiguous Array
+    func findMaxLength(_ nums: [Int]) -> Int {
+        var sum = 0
+        var maxLength = 0
+        
+        var prefixes: [Int: Int] = [0: -1]
+        
+        for i in 0..<nums.count {
+            if nums[i] == 0 {
+                sum += -1
+            } else {
+                sum += nums[i]
+            }
+            
+            if let index = prefixes[sum] {
+                maxLength = max(maxLength, i - index)
+            } else {
+                prefixes[sum] = i
+            }
+        }
+        
+        return maxLength
+    }
+    
+    // Product of Array Except Self
+    func productExceptSelf(_ nums: [Int]) -> [Int] { // Medium
+        var prefix = Array(repeating: 1, count: nums.count)
+        var suffix = Array(repeating: 1, count: nums.count)
+        var result = Array(repeating: 0, count: nums.count)
+        
+        for i in 1 ..< nums.count {
+            prefix[i] = prefix[i - 1] * nums[i - 1]
+        }
+        
+        for i in (0 ..< nums.count - 1).reversed() {
+            suffix[i] = suffix[i + 1] * nums[i + 1]
+        }
+        
+        for i in 0..<result.count {
+            result[i] = suffix[i] * prefix[i]
+        }
+    }
 }
